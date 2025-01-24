@@ -5,7 +5,7 @@ on:
     branches:
       - main
 
-logs:
+jobs:
   build:
     name: Build
     runs-on: macos-latest
