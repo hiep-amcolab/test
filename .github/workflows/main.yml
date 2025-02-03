@@ -72,15 +72,16 @@ jobs:
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles          
 
-      # - name: build archive
-      #   run: |
-      #     cd ios
-      #     xcodebuild -scheme "Runner" \
-      #     -archivePath $RUNNER_TEMP/Runner.xcarchive \
-      #     -sdk iphoneos \
-      #     -configuration Debug \
-      #     -destination generic/platform=iOS \
-      #     clean archive          
+      - name: build archive
+        run: |
+          cd ios
+          xcodebuild -scheme "Runner" \
+          -allowProvisioningUpdates \
+          -archivePath $RUNNER_TEMP/Runner.xcarchive \
+          -sdk iphoneos \
+          -configuration Debug \
+          -destination generic/platform=iOS \
+          clean archive          
 
       # - name: export ipa
       #   env:
