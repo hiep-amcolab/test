@@ -49,7 +49,3 @@ jobs:
 
       - name: Build Android
         run: flutter build apk --release
-
-      - name: Build iOS
-        if: runner.os == 'macOS'
-        run: flutter build ipa --release
