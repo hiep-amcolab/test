@@ -71,6 +71,7 @@ jobs:
           # apply provisioning profile
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+          cat ~/Library/MobileDevice/Provisioning\ Profiles/build_pp.mobileprovision
 
       # - name: build archive
       #   run: |
