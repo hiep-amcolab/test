@@ -74,6 +74,7 @@ jobs:
 
       - name: build archive
         run: |
+          ls $RUNNER_TEMP
           xcodebuild -scheme "Runner" \
           -archivePath $RUNNER_TEMP/Runner.xcarchive \
           -sdk iphoneos \
