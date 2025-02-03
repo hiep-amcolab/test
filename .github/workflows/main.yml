@@ -40,11 +40,15 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Build Android
-        run: flutter build apk --release
+      - name: Build iOS
+        if: runner.os == 'macOS'
+        run: flutter build ipa --release
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-apk  # Tên artifact hiển thị trên GitHub
-          path: build/app/outputs/flutter-apk/app-release.apk  # Đường dẫn đến file APK
+      # - name: Build Android
+      #   run: flutter build apk --release
+
+      # - name: Upload APK
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: android-apk  # Tên artifact hiển thị trên GitHub
+      #     path: build/app/outputs/flutter-apk/app-release.apk  # Đường dẫn đến file APK
