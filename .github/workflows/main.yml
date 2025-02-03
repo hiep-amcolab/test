@@ -50,3 +50,12 @@ jobs:
 
       - name: Build Android
         run: flutter build apk --release
+      
+      - name: List build files
+        run: ls -R build/app/outputs/
+        
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk  # Tên artifact hiển thị trên GitHub
+          path: build/app/outputs/flutter-apk/app-release.apk  # Đường dẫn đến file APK
