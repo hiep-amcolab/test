@@ -25,11 +25,11 @@ jobs:
       #       android/*.gradle*
       #       android/**/gradle-wrapper.properties
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.24.5'
-          cache: true
+      # - name: Setup Flutter
+      #   uses: subosito/flutter-action@v2
+      #   with:
+      #     flutter-version: '3.24.5'
+      #     cache: true
 
       # - uses: actions/cache@v4
       #   with:
@@ -40,8 +40,8 @@ jobs:
       #     restore-keys: |
       #       ${{ runner.os }}-gradle-
       
-      - name: Install dependencies
-        run: flutter pub get
+      # - name: Install dependencies
+      #   run: flutter pub get
 
       - name: Install the Apple certificate and provisioning profile
         env:
@@ -72,17 +72,15 @@ jobs:
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles          
 
-      - name: build archive
-        run: |
-          ls .
-          ls $RUNNER_TEMP
-          cd ios
-          xcodebuild -scheme "Runner" \
-          -archivePath $RUNNER_TEMP/Runner.xcarchive \
-          -sdk iphoneos \
-          -configuration Debug \
-          -destination generic/platform=iOS \
-          clean archive          
+      # - name: build archive
+      #   run: |
+      #     cd ios
+      #     xcodebuild -scheme "Runner" \
+      #     -archivePath $RUNNER_TEMP/Runner.xcarchive \
+      #     -sdk iphoneos \
+      #     -configuration Debug \
+      #     -destination generic/platform=iOS \
+      #     clean archive          
 
       # - name: export ipa
       #   env:
