@@ -54,6 +54,11 @@ jobs:
           echo ${{ github.ref }}
           echo ${{ github.ref }} > Release.txt
 
+      - uses: phish108/autotag-action@v1.1.55
+        with:
+          github-token: ${{ secrets.CUSTOM_GITHUB_TOKEN}}
+          with-v: "true"
+
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
