@@ -102,7 +102,7 @@ jobs:
           EXPORT_OPTS_PATH=$RUNNER_TEMP/ExportOptions.plist
           echo -n "$EXPORT_OPTIONS_PLIST" | base64 --decode -o $EXPORT_OPTS_PATH
           cat $EXPORT_OPTS_PATH
-          flutter build ipa --release --export-options-plist=$EXPORT_OPTS_PATH --verbose
+          flutter build ipa --release --export-options-plist=$EXPORT_OPTS_PATH
 
       # - name: Build Android
       #   run: flutter build apk --release
@@ -110,5 +110,11 @@ jobs:
       # - name: Upload APK
       #   uses: actions/upload-artifact@v4
       #   with:
-      #     name: android-apk  # Tên artifact hiển thị trên GitHub
-      #     path: build/app/outputs/flutter-apk/app-release.apk  # Đường dẫn đến file APK
+      #     name: android-apk
+      #     path: build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Upload application
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-ipa
+          path: build/ios/ipa/*.ipa
