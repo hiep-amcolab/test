@@ -1,13 +1,16 @@
 name: CI/CD for Flutter App
 
 on:
-  push:
+  pull_request:
     branches:
       - main
+    types: 
+      - closed
 
 jobs:
   build-android:
     name: Build Android
+    if: ${{ github.event.pull_request.merged }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -51,6 +54,7 @@ jobs:
 
   build-ios:
     name: Build iOS
+    if: ${{ github.event.pull_request.merged }}
     runs-on: macos-latest
     steps:
       - name: check Xcode version
@@ -97,7 +101,6 @@ jobs:
           # apply provisioning profile
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
-          shasum -a 256 $PP_PATH
 
       - name: Build iOS
         env:
