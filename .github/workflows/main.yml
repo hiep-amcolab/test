@@ -72,8 +72,9 @@ jobs:
 
       - uses: phish108/autotag-action@v1.1.55
         id: tagger
-        env:
+        with:
           github-token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
+          with-v: "true"
 
       - name: Test
         run: |
