@@ -77,10 +77,6 @@ jobs:
           bump: minor
           with-v: "true"
 
-      - name: Test
-        run: |
-          echo ${{ steps.tagger.outputs.new-tag }}
-
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
