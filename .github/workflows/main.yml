@@ -70,11 +70,18 @@ jobs:
       #     git tag $NEW_TAG
       #     git push origin $NEW_TAG
 
-      
+      - uses: phish108/autotag-action@v1.1.55
+        id: tagger
+        env:
+          github-token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
+
+      - name: Test
+        run: |
+          echo ${{ steps.tagger.outputs.new-tag }}
+
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref_name }}
           files: Release.txt
           token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
 
