@@ -74,7 +74,7 @@ jobs:
         id: version
         uses: mathieudutour/github-tag-action@v6.2
         with:
-          github-token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
+          github_token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
           default-bump: minor  # Tăng minor version mặc định (có thể thay đổi thành "patch" hoặc "major")
 
       - name: Release
