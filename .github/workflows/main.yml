@@ -50,7 +50,7 @@ jobs:
           path: build/app/outputs/flutter-apk/app-release.apk
 
   build-ios:
-    name: Build
+    name: Build iOS
     runs-on: macos-latest
     steps:
       - name: check Xcode version
