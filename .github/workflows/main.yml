@@ -69,12 +69,9 @@ jobs:
           security list-keychain -d user -s $KEYCHAIN_PATH
           security find-identity -v
           
-          # use uuid for the name of provisioning profile
-          UUID=$(/usr/libexec/PlistBuddy -c "Print UUID" /dev/stdin <<< $(/usr/bin/security cms -D -i $PP_PATH))
-
           # apply provisioning profile
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles/$UUID.mobileprovision
+          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
           shasum -a 256 $PP_PATH
 
       # - name: build archive
