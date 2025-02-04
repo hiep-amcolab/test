@@ -70,17 +70,18 @@ jobs:
       #     git tag $NEW_TAG
       #     git push origin $NEW_TAG
 
-      - uses: phish108/autotag-action@v1.1.55
-        id: tagger
+      - name: Generate release tag
+        id: generate_release_tag
+        uses: amitsingh-007/next-release-tag@v6.0.0
         with:
-          github-token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
-          bump: minor
-          with-v: "true"
+          github_token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
+          tag_prefix: 'v'
+          tag_template: 'yyyy.mm.dd.i'
 
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.tagger.outputs.new-tag }}
+          tag_name: ${{ steps.generate_release_tag.outputs.next_release_tag }}
           files: Release.txt
           token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
 
