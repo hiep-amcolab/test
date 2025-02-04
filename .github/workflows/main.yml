@@ -70,18 +70,17 @@ jobs:
       #     git tag $NEW_TAG
       #     git push origin $NEW_TAG
 
-      - name: Generate release tag
-        id: generate_release_tag
-        uses: amitsingh-007/next-release-tag@v6.0.0
+      - name: Get next version
+        id: version
+        uses: mathieudutour/github-tag-action@v6.2
         with:
-          github_token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
-          tag_prefix: 'v'
-          tag_template: 'i.i'
+          github-token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
+          default-bump: minor  # Tăng minor version mặc định (có thể thay đổi thành "patch" hoặc "major")
 
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.generate_release_tag.outputs.next_release_tag }}
+          tag_name: ${{ steps.version.outputs.next_release_tag }}
           files: Release.txt
           token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
 
