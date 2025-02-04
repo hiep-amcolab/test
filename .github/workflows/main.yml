@@ -6,16 +6,13 @@ on:
       - main
 
 jobs:
-  build:
-    name: Build
-    runs-on: macos-latest
+  build-android:
+    name: Build Android
+    runs-on: ubuntu-latest
     steps:
-      - name: check Xcode version
-        run: /usr/bin/xcodebuild -version
-
       - name: Checkout code
         uses: actions/checkout@v4
-
+      
       - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
@@ -25,12 +22,6 @@ jobs:
             android/*.gradle*
             android/**/gradle-wrapper.properties
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.24.5'
-          cache: true
-
       - uses: actions/cache@v4
         with:
           path: |
@@ -39,6 +30,40 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.5'
+          cache: true
+      
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build Android
+        run: flutter build apk --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+  build-ios:
+    name: Build
+    runs-on: macos-latest
+    steps:
+      - name: check Xcode version
+        run: /usr/bin/xcodebuild -version
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.5'
+          cache: true
       
       - name: Install dependencies
         run: flutter pub get
@@ -74,9 +99,6 @@ jobs:
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
           shasum -a 256 $PP_PATH
 
-      - name: Build Android
-        run: flutter build apk --release
-
       - name: Build iOS
         env:
           EXPORT_OPTIONS_PLIST: ${{ secrets.EXPORT_OPTIONS_PLIST }}
@@ -85,12 +107,6 @@ jobs:
           echo -n "$EXPORT_OPTIONS_PLIST" | base64 --decode -o $EXPORT_OPTS_PATH
           cat $EXPORT_OPTS_PATH
           flutter build ipa --release --export-options-plist=$EXPORT_OPTS_PATH
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
 
       - name: Upload IPA
         uses: actions/upload-artifact@v4
