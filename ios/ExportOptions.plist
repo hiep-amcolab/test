@@ -12,11 +12,11 @@
 	<string>app-store-connect</string>
 	<key>signingStyle</key>
 	<string>manual</string>
-    <key>provisioningProfiles</key>
-    <dict>
-        <key>com.example.testGithubAction</key>
-        <string>testGithubActionIosDevelopment</string>
-    </dict>
+	<key>provisioningProfiles</key>
+	<dict>
+		<key>com.example.testGithubAction</key>
+		<string>testGithubActionDistribution</string>
+	</dict>
 	<key>stripSwiftSymbols</key>
 	<true/>
 	<key>teamID</key>
