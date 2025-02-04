@@ -54,10 +54,20 @@ jobs:
           echo ${{ github.ref }}
           echo ${{ github.ref }} > Release.txt
 
-      - uses: phish108/autotag-action@v1.1.55
-        with:
-          github-token: ${{ secrets.CUSTOM_GITHUB_TOKEN}}
-          with-v: "true"
+      - name: Get and increment version
+        id: version
+        run: |
+          # Lấy tag cuối cùng, nếu không có thì gán giá trị mặc định "v0.0"
+          CURRENT_TAG=$(git tag -l "v*" | sort -V | tail -n 1 || echo "v0.0")
+          NEW_TAG="$(echo $CURRENT_TAG | awk -F. -v OFS=. '{print $1"."$2+1}')"
+          echo "New tag: $NEW_TAG"
+          echo "::set-output name=new_tag::$NEW_TAG"
+      
+      - name: Create and push new tag
+        run: |
+          NEW_TAG=${{ steps.version.outputs.new_tag }}
+          git tag $NEW_TAG
+          git push origin $NEW_TAG
 
       - name: Release
         uses: softprops/action-gh-release@v2
