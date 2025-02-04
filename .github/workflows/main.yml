@@ -72,6 +72,7 @@ jobs:
           # apply provisioning profile
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+          shasum -a 256 $PP_PATH
 
       - name: build archive
         run: |
