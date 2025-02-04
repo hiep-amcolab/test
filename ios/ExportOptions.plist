@@ -15,7 +15,7 @@
     <key>provisioningProfiles</key>
     <dict>
         <key>com.example.testGithubAction</key>
-        <string>testGithubAction</string>
+        <string>testGithubActionIosDevelopment</string>
     </dict>
 	<key>stripSwiftSymbols</key>
 	<true/>
