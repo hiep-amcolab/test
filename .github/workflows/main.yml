@@ -127,16 +127,16 @@ jobs:
       - name: Display structure of downloaded files
         run: ls -R
 
-      # - name: Generate tag
-      #   id: tag_generator
-      #   uses: mathieudutour/github-tag-action@v6.2
-      #   with:
-      #     github_token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
-      #     default_bump: minor
+      - name: Generate tag
+        id: tag_generator
+        uses: mathieudutour/github-tag-action@v6.2
+        with:
+          github_token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
+          default_bump: minor
 
-      # - name: Release
-      #   uses: softprops/action-gh-release@v2
-      #   with:
-      #     tag_name: ${{ steps.tag_generator.outputs.new_tag }}
-      #     files: build/app/outputs/flutter-apk/app-release.apk
-      #     token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag_generator.outputs.new_tag }}
+          files: artifacts/*
+          token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
