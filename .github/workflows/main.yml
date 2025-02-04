@@ -3,9 +3,7 @@ name: CI/CD for Flutter App
 on:
   push:
     tags:
-      - "v*"
-    branches:
-      - main
+      - v*
 
 jobs:
   build-android:
