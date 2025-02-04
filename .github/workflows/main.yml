@@ -59,6 +59,7 @@ jobs:
         run: |
           # Lấy tag cuối cùng, nếu không có thì gán giá trị mặc định "v0.0"
           CURRENT_TAG=$(git tag -l "v*" | sort -V | tail -n 1 || echo "v0.0")
+          echo "Current tag: $CURRENT_TAG"
           NEW_TAG="$(echo $CURRENT_TAG | awk -F. -v OFS=. '{print $1"."$2+1}')"
           echo "New tag: $NEW_TAG"
           echo "::set-output name=new_tag::$NEW_TAG"
