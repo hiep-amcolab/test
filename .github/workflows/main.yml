@@ -75,12 +75,12 @@ jobs:
         uses: mathieudutour/github-tag-action@v6.2
         with:
           github_token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
-          default-bump: minor  # Tăng minor version mặc định (có thể thay đổi thành "patch" hoặc "major")
+          default_bump: minor  # Tăng minor version mặc định (có thể thay đổi thành "patch" hoặc "major")
 
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.version.outputs.next_release_tag }}
+          tag_name: ${{ steps.version.outputs.new_tag }}
           files: Release.txt
           token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
 
