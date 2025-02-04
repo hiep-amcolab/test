@@ -46,13 +46,13 @@ jobs:
       - name: Build
         run: |
           echo ${{ github.ref }}
-          echo ${{ github.ref }} > Release.txt
+          echo ${{ github.ref }} > Release-apk.txt
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: android-apk
-          path: Release.txt
+          path: *.txt
 
       # - name: Upload APK
       #   uses: actions/upload-artifact@v4
@@ -128,13 +128,13 @@ jobs:
       - name: Build
         run: |
           echo ${{ github.ref }}
-          echo ${{ github.ref }} > Release.txt
+          echo ${{ github.ref }} > Release-ipa.txt
 
       - name: Upload IPA
         uses: actions/upload-artifact@v4
         with:
           name: ios-ipa
-          path: Release.txt
+          path: *.txt
 
   release:
     name: Release
