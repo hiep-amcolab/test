@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Read changelog from file
         id: changelog
         run: |
@@ -24,7 +24,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.changelog.outputs.changelog }}
+          tag_name: "kjhkjhk kjghkjhkjh"
           files: CHANGELOG.txt
           token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
   # build-android:
