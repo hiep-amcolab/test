@@ -21,7 +21,7 @@ jobs:
           CHANGELOG=$(cat ${{ github.workspace }}/CHANGELOG.txt | tr -d '\r\n' | tr '[:upper:]' '[:lower:]' | sed -e 's/ /-/g' -e 's/[^a-z0-9\.-]//g')
           echo "changelog=$CHANGELOG" >> $GITHUB_OUTPUT
 
-      - name: Release
+      - name: Release 
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.changelog.outputs.changelog }}
