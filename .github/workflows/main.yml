@@ -14,8 +14,8 @@ jobs:
         id: changelog
         run: |
           pwd
-          ls .
-          CHANGELOG=$(cat CHANGELOG.txt | tr -d '\r\n')
+          ls ${{ github.workspace }}
+          CHANGELOG=$(cat ${{ github.workspace }}/CHANGELOG.txt | tr -d '\r\n')
           echo "changelog=$CHANGELOG" >> $GITHUB_OUTPUT
 
       - name: Release
