@@ -21,10 +21,17 @@ jobs:
           CHANGELOG=$(cat ${{ github.workspace }}/CHANGELOG.txt | tr -d '\r\n' | tr '[:upper:]' '[:lower:]' | sed -e 's/ /-/g' -e 's/[^a-z0-9\.-]//g')
           echo "changelog=$CHANGELOG" >> $GITHUB_OUTPUT
 
+      - name: Generate tag
+        id: tag_generator
+        uses: mathieudutour/github-tag-action@v6.2
+        with:
+          github_token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
+          default_bump: minor
+
       - name: Release 
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.changelog.outputs.changelog }}
+          tag_name: "${{ steps.changelog.outputs.changelog }}_${{steps.tag_generator.outputs.new_tag}}"
           files: pubspec.yaml
           token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
   # build-android:
