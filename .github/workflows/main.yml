@@ -6,137 +6,159 @@ on:
       - main
 
 jobs:
-  build-android:
-    name: Build Android
+  test-release:
+    name: Test Release
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      
-      - uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-          cache: 'gradle'
-          cache-dependency-path: |
-            android/*.gradle*
-            android/**/gradle-wrapper.properties
-
-      - uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.24.5'
-          cache: true
-      
-      - name: Install dependencies
-        run: flutter pub get
-
-      - name: Build Android
-        run: flutter build apk --release
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
-
-  build-ios:
-    name: Build iOS
-    # if: ${{ github.event.pull_request.merged }}
-    runs-on: macos-latest
-    steps:
-      - name: check Xcode version
-        run: /usr/bin/xcodebuild -version
-
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.24.5'
-          cache: true
-      
-      - name: Install dependencies
-        run: flutter pub get
-
-      - name: Install the Apple certificate and provisioning profile
-        env:
-          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
-          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
-          BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.BUILD_PROVISION_PROFILE_BASE64 }}
-          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+      - name: Read changelog from file
+        id: changelog
         run: |
-          # create variables
-          CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
-          PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
-          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
-
-          # import certificate and provisioning profile from secrets
-          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
-          echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode -o $PP_PATH
-
-          # create temporary keychain
-          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
-          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-
-          # import certificate to keychain
-          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
-          security list-keychain -d user -s $KEYCHAIN_PATH
-          security find-identity -v
-          
-          # apply provisioning profile
-          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
-
-      - name: Build iOS
-        env:
-          EXPORT_OPTIONS_PLIST: ${{ secrets.EXPORT_OPTIONS_PLIST }}
-        run: |
-          EXPORT_OPTS_PATH=$RUNNER_TEMP/ExportOptions.plist
-          echo -n "$EXPORT_OPTIONS_PLIST" | base64 --decode -o $EXPORT_OPTS_PATH
-          cat $EXPORT_OPTS_PATH
-          flutter build ipa --release --export-options-plist=$EXPORT_OPTS_PATH
-
-      - name: Upload IPA
-        uses: actions/upload-artifact@v4
-        with:
-          name: ios-ipa
-          path: build/ios/ipa/*.ipa
-
-  release:
-    name: Release
-    needs: [build-android, build-ios]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          path: ./artifacts
-          merge-multiple: true
-
-      - name: Display structure of downloaded files
-        run: ls -R
-
-      - name: Generate tag
-        id: tag_generator
-        uses: mathieudutour/github-tag-action@v6.2
-        with:
-          github_token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
-          default_bump: minor
+          CHANGELOG=$(cat CHANGELOG.txt | tr -d '\r\n')
+          echo "::set-output name=changelog::$CHANGELOG"
 
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.tag_generator.outputs.new_tag }}
-          files: artifacts/*
+          tag_name: ${{ steps.changelog.outputs.changelog }}
+          files: CHANGELOG.txt
           token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
+  # build-android:
+  #   name: Build Android
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+      
+  #     - uses: actions/setup-java@v4
+  #       with:
+  #         distribution: 'temurin'
+  #         java-version: '17'
+  #         cache: 'gradle'
+  #         cache-dependency-path: |
+  #           android/*.gradle*
+  #           android/**/gradle-wrapper.properties
+
+  #     - uses: actions/cache@v4
+  #       with:
+  #         path: |
+  #           ~/.gradle/caches
+  #           ~/.gradle/wrapper
+  #         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-gradle-
+
+  #     - name: Setup Flutter
+  #       uses: subosito/flutter-action@v2
+  #       with:
+  #         flutter-version: '3.24.5'
+  #         cache: true
+      
+  #     - name: Install dependencies
+  #       run: flutter pub get
+
+  #     - name: Build Android
+  #       run: flutter build apk --release
+
+  #     - name: Upload APK
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: android-apk
+  #         path: build/app/outputs/flutter-apk/app-release.apk
+
+  # build-ios:
+  #   name: Build iOS
+  #   # if: ${{ github.event.pull_request.merged }}
+  #   runs-on: macos-latest
+  #   steps:
+  #     - name: check Xcode version
+  #       run: /usr/bin/xcodebuild -version
+
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+
+  #     - name: Setup Flutter
+  #       uses: subosito/flutter-action@v2
+  #       with:
+  #         flutter-version: '3.24.5'
+  #         cache: true
+      
+  #     - name: Install dependencies
+  #       run: flutter pub get
+
+  #     - name: Install the Apple certificate and provisioning profile
+  #       env:
+  #         BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+  #         P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+  #         BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.BUILD_PROVISION_PROFILE_BASE64 }}
+  #         KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+  #       run: |
+  #         # create variables
+  #         CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
+  #         PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
+  #         KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+
+  #         # import certificate and provisioning profile from secrets
+  #         echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
+  #         echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode -o $PP_PATH
+
+  #         # create temporary keychain
+  #         security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+  #         security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+  #         security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+
+  #         # import certificate to keychain
+  #         security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+  #         security list-keychain -d user -s $KEYCHAIN_PATH
+  #         security find-identity -v
+          
+  #         # apply provisioning profile
+  #         mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+  #         cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+
+  #     - name: Build iOS
+  #       env:
+  #         EXPORT_OPTIONS_PLIST: ${{ secrets.EXPORT_OPTIONS_PLIST }}
+  #       run: |
+  #         EXPORT_OPTS_PATH=$RUNNER_TEMP/ExportOptions.plist
+  #         echo -n "$EXPORT_OPTIONS_PLIST" | base64 --decode -o $EXPORT_OPTS_PATH
+  #         cat $EXPORT_OPTS_PATH
+  #         flutter build ipa --release --export-options-plist=$EXPORT_OPTS_PATH
+
+  #     - name: Upload IPA
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: ios-ipa
+  #         path: build/ios/ipa/*.ipa
+
+  # release:
+  #   name: Release
+  #   needs: [build-android, build-ios]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/download-artifact@v4
+  #       with:
+  #         path: ./artifacts
+  #         merge-multiple: true
+
+  #     - name: Display structure of downloaded files
+  #       run: ls -R
+
+  #     - name: Read changelog from file
+  #       id: changelog
+  #       run: |
+  #         CHANGELOG=$(cat CHANGELOG.txt | tr -d '\r\n')
+  #         echo "::set-output name=changelog::$CHANGELOG"
+
+  #     - name: Generate tag
+  #       id: tag_generator
+  #       uses: mathieudutour/github-tag-action@v6.2
+  #       with:
+  #         github_token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
+  #         default_bump: minor
+
+  #     - name: Release
+  #       uses: softprops/action-gh-release@v2
+  #       with:
+  #         tag_name: ${{ steps.changelog.outputs.changelog }}
+  #         files: artifacts/*
+  #         token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
