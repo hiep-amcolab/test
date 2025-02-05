@@ -13,9 +13,10 @@ jobs:
       - name: Read changelog from file
         id: changelog
         run: |
+          pwd
           ls .
           CHANGELOG=$(cat CHANGELOG.txt | tr -d '\r\n')
-          echo "changelog={$CHANGELOG}" >> $GITHUB_OUTPUT
+          echo "changelog=$CHANGELOG" >> $GITHUB_OUTPUT
 
       - name: Release
         uses: softprops/action-gh-release@v2
