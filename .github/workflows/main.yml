@@ -10,6 +10,9 @@ jobs:
     name: Test Release
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
       - name: Read changelog from file
         id: changelog
         run: |
