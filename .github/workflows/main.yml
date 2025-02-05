@@ -18,13 +18,13 @@ jobs:
         run: |
           pwd
           ls ${{ github.workspace }}
-          CHANGELOG=$(cat ${{ github.workspace }}/CHANGELOG.txt | tr -d '\r\n')
+          CHANGELOG=$(cat ${{ github.workspace }}/CHANGELOG.txt | tr -d '\r\n' | tr '[:upper:]' '[:lower:]' | sed -e 's/ /-/g' -e 's/[^a-z0-9\.-]//g')
           echo "changelog=$CHANGELOG" >> $GITHUB_OUTPUT
 
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: "kjhkjhk kjghkjhkjh"
+          tag_name: ${{ steps.changelog.outputs.changelog }}
           files: CHANGELOG.txt
           token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
   # build-android:
